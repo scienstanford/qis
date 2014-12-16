@@ -139,6 +139,7 @@ colormap(gray(256))
 
 %% Create image processing object
 
+% OLD
 ip = vcimageCreate;
 
 ip = imageSet(ip,'sensor input',vs);
@@ -146,7 +147,18 @@ ip = vcimageCompute(ip,sensor);
 ieAddObject(ip);
 vcimageWindow;
 
+%% Create image processing object
 
+% Create an image processing object
+ip = vcimageCreate;
+
+% Put the voltages into the result field of the image processing module
+result = repmat(vs,[1 1 3]);
+ip = imageSet(ip,'result',result);
+
+% Add the object to the IP window so we can interact with it
+ieAddObject(ip);
+vcimageWindow;
 
 %% End
 
