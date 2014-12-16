@@ -137,17 +137,34 @@ colormap(gray(256))
 
 %% Create image processing object
 
+% Create an image processing object
 ip = vcimageCreate;
 
-ip = imageSet(ip,'sensor input',vs);
-ip = vcimageCompute(ip,sensor);
+% Put the voltages into the result field of the image processing module
+result = repmat(vs,[1 1 3]);
+ip = imageSet(ip,'result',result);
+
+% Add the object to the IP window so we can interact with it
 ieAddObject(ip);
 vcimageWindow;
 
 %% MTF
 
-[roiLocs,masterRect] = vcROISelect(vci);
-masterRect = [ 27    13    35    53];   % October 2, 2010
+%[roiLocs,masterRect] = vcROISelect(ip);
+masterRect = [305   187   363   431]; 
+
+roiLocs = ieRoi2Locs(masterRect);
+
+barImage = vcGetROIData(ip,roiLocs,'results');
+c = masterRect(3)+1;
+r = masterRect(4)+1;
+barImage = reshape(barImage,r,c,3);
+% vcNewGraphWin; imagesc(barImage(:,:,1)); axis image; colormap(gray);
+
+% Run the ISO 12233 code.  The results are stored in the window.
+pixel = sensorGet(sensor,'pixel');
+dx = pixelGet(pixel,'width','mm');
+ISO12233(barImage, dx) 
 
 
 %% End
