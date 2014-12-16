@@ -28,15 +28,13 @@ s_initISET
 % scene = sceneCreate; % default is Macbeth ColorChecker
 scene = sceneCreate('slanted edge'); 
 scene = sceneSet(scene,'fov',2);
-ieAddObject(scene);
-sceneWindow;
 
 % Many optics parameters can be set.  To get a sense, run
 % doc oiCreate
 % doc opticsCreate
 %
 oi = oiCreate;
-oi = oiSet(oi,'optics fnumber', 2.8);
+%oi = oiSet(oi,'optics fnumber', 2.8);
 oi = oiCompute(oi,scene);
 
 %% Make a QIS style sensor.
@@ -146,6 +144,10 @@ ip = vcimageCompute(ip,sensor);
 ieAddObject(ip);
 vcimageWindow;
 
+%% MTF
+
+[roiLocs,masterRect] = vcROISelect(vci);
+masterRect = [ 27    13    35    53];   % October 2, 2010
 
 
 %% End
