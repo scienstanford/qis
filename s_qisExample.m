@@ -26,10 +26,16 @@ s_initISET
 
 % scene = sceneCreate('uniform');
 % scene = sceneCreate; % default is Macbeth ColorChecker
-scene = sceneCreate('slanted edge'); 
+% scene = sceneCreate('slanted edge'); 
+% scene = sceneSet(scene,'fov',2);
+% ieAddObject(scene);
+% sceneWindow;
+
+scene = sceneHDRChart;
 scene = sceneSet(scene,'fov',2);
 ieAddObject(scene);
 sceneWindow;
+
 
 % Many optics parameters can be set.  To get a sense, run
 % doc oiCreate
@@ -159,6 +165,13 @@ ip = imageSet(ip,'result',result);
 % Add the object to the IP window so we can interact with it
 ieAddObject(ip);
 vcimageWindow;
+
+
+%% 
+
+
+
+
 
 %% End
 
