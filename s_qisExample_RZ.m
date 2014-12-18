@@ -26,14 +26,8 @@ s_initISET
 
 % scene = sceneCreate('uniform');
 % scene = sceneCreate; % default is Macbeth ColorChecker
-% scene = sceneCreate('slanted edge'); 
-% scene = sceneSet(scene,'fov',2);
-% ieAddObject(scene);
-% sceneWindow;
-
-scene = sceneHDRChart;
+scene = sceneCreate('slanted edge'); 
 scene = sceneSet(scene,'fov',2);
-
 
 % Many optics parameters can be set.  To get a sense, run
 % doc oiCreate
