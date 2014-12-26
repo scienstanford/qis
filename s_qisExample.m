@@ -58,6 +58,7 @@ oi = oiCompute(oi,scene);
 sensor = sensorCreateIdeal('monochrome');         % No sensor noise
 sensor = sensorSet(sensor,'pixel size',0.14e-6);  % .14 microns
 sensor = sensorSet(sensor,'pixel pd width and height',[0.14,0.14]*1e-6);
+sensor = sensorSet(sensor,'voltage swing',0.1);   % 100 mV
 % sensorGet(sensor,'pixel fill factor')
 
 % Look at: pixelCenterFillPD
@@ -156,9 +157,49 @@ vcimageWindow;
 
 %% MTF
 
+scene = sceneCreate('slanted edge'); 
+scene = sceneSet(scene,'fov',2);
+ieAddObject(scene); 
+sceneWindow;
+
+oi = oiCompute(oi,scene);
+sz = sensorGet(sensor,'size');
+nFrames = 16;    % For the example
+jot = zeros(sz(1),sz(2),nFrames);
+
+%  Haven't really parallelized yet.  We will some day soon.
+w = waitbar(0,'QIS snapshots');
+for ii=1:nFrames
+    waitbar(ii/nFrames,w,sprintf('Scene %i',ii));  
+    
+    % There will be a sensorComputeMovie before too long.
+    tmp = sensorCompute(sensor,oi);
+    
+    % Try doc sensorGet to see what you can pull from this object
+    e = sensorGet(tmp,'electrons');
+    e(e>0) = 1;         % Binarize
+    jot(:,:,ii) = e;    % Store
+end
+close(w)
+
+%% Show the image as the sum of jots
+
+%  There should be many types of computations here. That's where the
+%  creativity will come in, I think.
+v = sum(jot,3);
+result = repmat(v,[1 1 3]);
+ip = imageSet(ip,'result',result);
+
+% Add the object to the IP window so we can interact with it
+ieAddObject(ip);
+vcimageWindow;
+
+%%
 %[roiLocs,masterRect] = vcROISelect(ip);
 masterRect = [305   187   363   431]; 
 
+% This needs to be debugged, maybe because the data noisy?
+% masterRect = ISOFindSlantedBar(ip);
 roiLocs = ieRoi2Locs(masterRect);
 
 barImage = vcGetROIData(ip,roiLocs,'results');
@@ -171,7 +212,7 @@ barImage = reshape(barImage,r,c,3);
 pixel = sensorGet(sensor,'pixel');
 dx = pixelGet(pixel,'width','mm');
 ISO12233(barImage, dx) 
-
+set(gca,'xscale','log')
 
 %% End
 
